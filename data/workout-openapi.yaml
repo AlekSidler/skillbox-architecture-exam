@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: Workout processing data center
+  description: Interdomain Server Communication
+  version: 1.0.0
+
+paths:
+  /v1/user/{userId}/statistics:
+    get:
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user which data to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: timePeriod
+          in: query
+          description: Time period of data
+          example: 20210101-20220101
+          schema:
+            type: string
+        - name: devices
+          in: query
+          description: Devices which were used on training, by default all devices are selected
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: trainingTypeId
+          in: query
+          description: Training type. e.g. running or cycling.
+          schema:
+            type: integer
+            format: int64
+      summary: Get user statistics
+      description: Get user statistics, calculated from workouts
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stats"
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+  /v1/user/{userId}/achievements:
+    get:
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user which data to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: timePeriod
+          in: query
+          description: Time period of data
+          example: 20210101-20220101
+          schema:
+            type: string
+        - name: devices
+          in: query
+          description: Devices which were used on training, by default all devices are selected
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: trainingTypeId
+          in: query
+          description: Training type. e.g. running or cycling.
+          schema:
+            type: integer
+            format: int64
+      summary: Get user achievements
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/achievementList"
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+  /v1/achievements/{achievementId}:
+    get:
+      parameters:
+        - name: achievementId
+          in: path
+          description: ID of achievement which data to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      summary: Get user achievements
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/achievement"
+        "404":
+          description: Achievement not found
+        "500":
+          description: Internal server error
+
+components:
+  schemas:
+    achievementList:
+      type: object
+      properties:
+        elements:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Achievement ID
+              timestamp:
+                type: string
+                format: date-time
+              pic:
+                type: string
+                format: binary
+              relatedInfo:
+                type: object
+                description: Information related to this achievement
+                properties:
+                  trainingIds:
+                    type: array
+                    description: Crucial Training IDs, related to the achievement
+                    items:
+                      type: integer
+            required:
+              - id
+              - timestamp
+    achievement:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Achievement ID
+        description:
+          type: string
+          description: Achievement description
+        numberAchieved:
+          type: integer
+          description: Number of people have this achievement
+        largePic:
+          type: string
+          format: binary
+    stats:
+      type: object
+      properties:
+        heartbeatPercentiles:
+          type: array
+          items:
+            type: number
+            format: double
+        totalCaloriesBurnt:
+          type: number
+          format: double
+        runningInfo:
+          description: Specific info for running workout
+          type: object
+          properties:
+            speedPercentiles:
+              type: array
+              items:
+                type: number
+            paceFrequencyPercentiles:
+              type: array
+              items:
+                type: number
+        cyclingInfo:
+          description: Specific info for cycling workout
+          type: object
+          properties:
+            speedPercentiles:
+              type: array
+              items:
+                type: number
+                format: double
+            cadencePercentiles:
+              type: array
+              items:
+                type: number
+                format: double
