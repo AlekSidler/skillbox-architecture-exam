@@ -14,4 +14,4 @@
 * [Абстракция доступа к базе данных](../adrs/02-database-abstraction.md)
 * [Выбор технологического стека](../adrs/03-tech-stack.md)
 * [Выбор брокера сообщений](../adrs/04-message-broker.md)
-* [Выбор и настройка оркестратора](../adrs/05-orchestrator.md)
+* [Выбор и настройка оркестратора](../adrs/05-orchestration.md)
